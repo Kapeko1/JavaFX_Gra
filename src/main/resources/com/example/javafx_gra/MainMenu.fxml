@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="448.0" prefWidth="624.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx_gra.MainMenuController">
+   <children>
+      <Label alignment="CENTER" layoutX="202.0" layoutY="25.0" prefHeight="68.0" prefWidth="221.0" text="Snejk ">
+         <font>
+            <Font name="Comic Sans MS" size="56.0" />
+         </font>
+      </Label>
+      <Button fx:id="StartGameButton" layoutX="266.0" layoutY="135.0" mnemonicParsing="false" onAction="#OnStartGameButtonClick" text="Graj">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Button>
+      <Button fx:id="CloseGameButton" layoutX="232.0" layoutY="334.0" mnemonicParsing="false" onAction="#OnCloseButtonClick" prefHeight="57.0" prefWidth="160.0" text="Wyjscie">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Button>
+      <Button layoutX="240.0" layoutY="224.0" mnemonicParsing="false" prefHeight="57.0" prefWidth="144.0" text="Wyniki">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>
