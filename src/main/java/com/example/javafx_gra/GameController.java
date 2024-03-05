@@ -16,7 +16,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
@@ -40,13 +39,17 @@ public class GameController implements Initializable {
 
     private Direction currentDirection = Direction.NONE;
 
+                /* Wywyłanie metody initialize, uruchamianej wraz ze startem sceny */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        /* Dodanie słuchaczy śledzących zmiany w wysokości i szerokości okna */
         GamePane.widthProperty().addListener((obs, oldVal, newVal) -> adjustGameComponents());
         GamePane.heightProperty().addListener((obs, oldVal, newVal) -> adjustGameComponents());
-        Platform.runLater(this::adjustGameComponents); // Initial adjustment
+        Platform.runLater(this::adjustGameComponents); // Dopasowanie elementów layoutu do nowych rozmiarów okna
     }
 
+    /* Uniwersalna metoda do dopasowywania elementów layoutu.
+   ANTYKOMBINOWANIE Za każdym razem tworzony jest nowy gracz bo zmienia się prędkość głowy  */
     private void adjustGameComponents() {
         createPlayer();
         scoreLabel.setTextFill(Color.BLACK);
@@ -57,24 +60,28 @@ public class GameController implements Initializable {
         gameLoop.start();
     }
 
+    /* Metoda służąca do utworzenia nowego gracza w centrym GamePane */
     private void createPlayer() {
+        /* Trzeba usunąc starego Playera bo przy zmianie rozmiaru wywoływałem metode createPlayer i pojawiało się wielu graczy w nowym centrum okna */
         if (Player != null) {
-            GamePane.getChildren().remove(Player); // Remove the old player if it exists
+            GamePane.getChildren().remove(Player);
         }
-        double playerWidth = GamePane.getWidth() * 0.02; // 2% of GamePane's width
-        double playerHeight = GamePane.getHeight() * 0.05; // 5% of GamePane's height
+
+        /* Dostosowanie rozmiarów gracza do GamePane (responsywność) 2% i 5% */
+        double playerWidth = GamePane.getWidth() * 0.02;
+        double playerHeight = GamePane.getHeight() * 0.05;
+        /* Ustawienie gracza na środek */
         double startX = GamePane.getWidth() / 2 - playerWidth / 2;
         double startY = GamePane.getHeight() / 2 - playerHeight / 2;
-
         Player = new Rectangle(startX, startY, playerWidth, playerHeight);
         Player.setFill(Color.BLACK);
         GamePane.getChildren().add(Player);
     }
-
+        /* Uruchomienie czytania klawiatury */
     public void setControl() {
         Platform.runLater(() -> GamePane.getScene().setOnKeyPressed(this::handleKeyPress));
     }
-
+        /* Ustawianie aktualnego kierunku na podstawie kliknietej strzalki */
     private void handleKeyPress(KeyEvent keyEvent) {
         switch (keyEvent.getCode()) {
             case UP:
@@ -93,11 +100,11 @@ public class GameController implements Initializable {
                 currentDirection = Direction.NONE;
                 break;
             default:
-                // Ignore other keys
+                // Ignorowanie innych przycisków
                 break;
         }
     }
-
+        /* Uruchomienie animacji ruchu głowy */
     private final AnimationTimer gameLoop = new AnimationTimer() {
         @Override
         public void handle(long now) {
@@ -115,12 +122,12 @@ public class GameController implements Initializable {
                     movePlayer(1, 0);
                     break;
                 case NONE:
-                    // Wait for player to move
+                    // Oczekiwanie na ruch
                     break;
             }
         }
     };
-
+    /* Aktualizacja pozycji Playera na podstawie animacji */
     private void movePlayer(double dx, double dy) {
         double newX = Player.getX() + dx;
         double newY = Player.getY() + dy;
@@ -134,7 +141,7 @@ public class GameController implements Initializable {
             gameLoop.stop();
         }
     }
-
+        /* Metoda wywołująca powrót do sceny Main Menu */
     public void ShowMainMenu() {
         try {
             Parent mainMenu = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainMenu.fxml")));
@@ -145,7 +152,7 @@ public class GameController implements Initializable {
         } catch (IOException ignored) {
         }
     }
-
+        /* Metoda wywołująca pane oznaczające koniec gry, wraz z napisem i przyciskiem */
     public void ShowGameOverPane() {
         if (GameOverPane == null) {
             GameOverPane = new Pane();
@@ -154,25 +161,23 @@ public class GameController implements Initializable {
 
             GameOverButton.setOnAction(event -> ShowMainMenu());
 
-            // Ustawienia dla GameOverLabel
-            GameOverLabel.setFont(new Font("System", 48)); // Ustawienie rozmiaru fontu
-            GameOverLabel.setTextFill(Color.WHITE); // Ustawienie koloru tekstu
+            GameOverLabel.setFont(new Font("System", 48));
+            GameOverLabel.setTextFill(Color.WHITE);
 
-            // Ustawienie tła GameOverPane na czarne
             GameOverPane.setStyle("-fx-background-color: black;");
-
+            //Ustawienie hierarchii
             GameOverPane.getChildren().addAll(GameOverButton, GameOverLabel);
             GameSceneBase.getChildren().add(GameOverPane);
         }
 
-        GameOverPane.setVisible(true); // Pokaż GameOverPane
-        Platform.runLater(this::updateGameOverPaneLayout);
+        GameOverPane.setVisible(true);
+        Platform.runLater(this::updateGameOverPaneLayout);// Musiałem to dodać bo pierwszy label nie był wyśrodkowany i aktualizaowało się dopiero po zmianie rozmiarów okna
 
         // Dodajemy słuchacze do GameSceneBase, aby reagować na zmiany rozmiaru
         GameSceneBase.widthProperty().addListener((obs, oldVal, newVal) -> updateGameOverPaneLayout());
         GameSceneBase.heightProperty().addListener((obs, oldVal, newVal) -> updateGameOverPaneLayout());
     }
-
+    /* Responsywna aktualizacja elementów GameOverPane */
     private void updateGameOverPaneLayout() {
         GameOverPane.setPrefSize(GameSceneBase.getWidth(), GameSceneBase.getHeight());
 
