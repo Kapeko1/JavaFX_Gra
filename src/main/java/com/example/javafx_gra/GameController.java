@@ -142,7 +142,7 @@ public class GameController implements Initializable {
         }
     }
         /* Metoda wywołująca powrót do sceny Main Menu */
-    public void ShowMainMenu() {
+    public void showMainMenu() {
         try {
             Parent mainMenu = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainMenu.fxml")));
             Scene scene = new Scene(mainMenu);
@@ -159,7 +159,7 @@ public class GameController implements Initializable {
             GameOverButton = new Button("Główne menu");
             GameOverLabel = new Label("Ale lipa");
 
-            GameOverButton.setOnAction(event -> ShowMainMenu());
+            GameOverButton.setOnAction(event -> showMainMenu());
 
             GameOverLabel.setFont(new Font("System", 48));
             GameOverLabel.setTextFill(Color.WHITE);
@@ -180,12 +180,10 @@ public class GameController implements Initializable {
     /* Responsywna aktualizacja elementów GameOverPane */
     private void updateGameOverPaneLayout() {
         GameOverPane.setPrefSize(GameSceneBase.getWidth(), GameSceneBase.getHeight());
-
-        // Centrujemy GameOverButton i GameOverLabel w GameOverPane
+        /* Centrowanie elementów GameOverPane */
         GameOverButton.setLayoutX(GameSceneBase.getWidth() / 2 - GameOverButton.getWidth() / 2);
         GameOverButton.setLayoutY(GameSceneBase.getHeight() / 2 - GameOverButton.getHeight() / 2 + 50);
-        GameOverLabel.setLayoutX(GameSceneBase.getWidth() / 2 - GameOverLabel.getLayoutBounds().getWidth() / 2); // Używamy getLayoutBounds dla dokładnego środkowania
-        GameOverLabel.setLayoutY(GameSceneBase.getHeight() / 2 - GameOverLabel.getLayoutBounds().getHeight() / 2 - 50);
+        GameOverLabel.setLayoutX(GameSceneBase.getWidth() / 2 - GameOverLabel.getWidth() / 2);
+        GameOverLabel.setLayoutY(GameSceneBase.getHeight() / 2 - GameOverLabel.getHeight() / 2 - 50);
     }
-
 }
