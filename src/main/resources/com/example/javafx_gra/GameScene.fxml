@@ -4,12 +4,13 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 
-<AnchorPane fx:id="GameSceneBase" prefHeight="464.0" prefWidth="710.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx_gra.GameController">
-   <children>
-      <Label fx:id="scoreLabel" prefHeight="31.0" prefWidth="119.0" AnchorPane.leftAnchor="66" AnchorPane.topAnchor="21" />
+<AnchorPane fx:id="GameSceneBase" prefHeight="464.0" prefWidth="710.0" xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx_gra.GameController">
+   <Label fx:id="scoreLabel" prefHeight="31.0" prefWidth="119.0" AnchorPane.leftAnchor="66" AnchorPane.topAnchor="21"/>
 
-      <!-- Przykład kotwiczenia Pane, aby rozciągał się z marginesami -->
-      <Pane style="-fx-background-color: #000000;" AnchorPane.bottomAnchor="60" AnchorPane.leftAnchor="60" AnchorPane.rightAnchor="60" AnchorPane.topAnchor="60" />
-      <Pane fx:id="GamePane" style="-fx-background-color: #808080;" AnchorPane.bottomAnchor="66" AnchorPane.leftAnchor="66" AnchorPane.rightAnchor="66" AnchorPane.topAnchor="66" />
-   </children>
+   <!-- Przykład kotwiczenia Pane, aby rozciągał się z marginesami -->
+   <Pane style="-fx-background-color: #000000;" AnchorPane.bottomAnchor="60" AnchorPane.leftAnchor="60"
+         AnchorPane.rightAnchor="60" AnchorPane.topAnchor="60"/>
+   <Pane fx:id="GamePane" style="-fx-background-color: #808080;" AnchorPane.bottomAnchor="66" AnchorPane.leftAnchor="66"
+         AnchorPane.rightAnchor="66" AnchorPane.topAnchor="66"/>
 </AnchorPane>
