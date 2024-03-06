@@ -18,11 +18,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.ArrayList;
+
 
 public class GameController implements Initializable {
     @FXML
@@ -33,9 +36,10 @@ public class GameController implements Initializable {
     private Pane GameOverPane;
     @FXML
     private AnchorPane GameSceneBase;
-
-
-    private Rectangle Player;
+    private int score = 0;
+    private final List<Rectangle> snakeSegments = new ArrayList<>(); // Lista segmentów węża
+    private Rectangle head;
+    private Rectangle Food;
 
     public enum Direction {
         UP, DOWN, LEFT, RIGHT, NONE
@@ -48,10 +52,11 @@ public class GameController implements Initializable {
     /* Wywołanie metody initialize, która uruchamiana jest wraz z uruchomieniem GameController */
     public void initialize(URL location, ResourceBundle resources) {
         createPlayer();
-        scoreLabel.setText("0");
+        scoreLabel.setText("Wynik = " + score);
         GamePane.requestFocus();
         setControl();
         gameLoop.start();
+        createFood();
     }
 
     /* Tworzenie nowego gracza o określonych wymiarach */
@@ -61,10 +66,16 @@ public class GameController implements Initializable {
         v2 = y w GamePane
         v3 = szerokosc gracza
         v4 = wysokosc gracza */
-        Player = new Rectangle(220, 135, 10, 10);
-        Player.setFill(Color.BLACK); // Ustawienie koloru gracza
-
-        GamePane.getChildren().add(Player); // Dodanie prostokąta do GamePane
+        head = new Rectangle(220, 135, 10, 10);
+        head.setFill(Color.BLACK);
+        snakeSegments.add(head);
+        GamePane.getChildren().add(head);
+        for (int i = 0; i < 22; i++) {
+            Rectangle transparentSegment = new Rectangle(220 - (i + 1) * 10, 135, 10, 10); // Pozycjonowanie za głową
+            transparentSegment.setFill(Color.TRANSPARENT);
+            snakeSegments.add(transparentSegment);
+            GamePane.getChildren().add(transparentSegment);
+        }
     }
 
     /* Uruchomienie czytania naciscniec klawiszy*/
@@ -114,25 +125,35 @@ public class GameController implements Initializable {
                 case NONE:
                     break; // Czeka na ruch gracza
             }
+            checkCollisionWithFood();
+            checkCollisionWithSelf();
         }
     };
 
     /* Aktualizacja polozenia gracza */
     private void movePlayer(double dx, double dy) {
-        double newX = Player.getX() + dx;
-        double newY = Player.getY() + dy;
-
-        //Sprawdzanie kolizji z krawedzia GamePane
-        if (newX >= 0 && newX + Player.getWidth() <= GamePane.getWidth() &&
-                newY >= 0 && newY + Player.getHeight() <= GamePane.getHeight()) {
-            Player.setX(newX);
-            Player.setY(newY);
+        Rectangle head = snakeSegments.getFirst();
+        double newX = head.getX() + dx;
+        double newY = head.getY() + dy;
+        // Sprawdzanie kolizji z krawędzią GamePane i aktualizacja pozycji głowy
+        if (newX >= 0 && newX + head.getWidth() <= GamePane.getWidth() && newY >= 0 && newY + head.getHeight() <= GamePane.getHeight()) {
+            head.setX(newX);
+            head.setY(newY);
         } else {
-            /* W przypadku kolizji ze sciana GamePane wywoluje ekran przegranej gry oraz zatrzymuje ruch*/
+            gameLoop.stop();
             ShowGameOverPane();
+        }
+
+        for (int i = snakeSegments.size() - 1; i > 0; i--) {
+            // Przesunięcie każdego segmentu do pozycji poprzedniego
+            Rectangle prevSegment = snakeSegments.get(i - 1);
+            Rectangle segment = snakeSegments.get(i);
+            segment.setX(prevSegment.getX());
+            segment.setY(prevSegment.getY());
         }
     }
 
+    /* Wywołanie głownego menu */
     public void ShowMainMenu() {
         try {
             Parent mainMenu = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainMenu.fxml")));
@@ -176,5 +197,72 @@ public class GameController implements Initializable {
 
         GameOverPane.setVisible(true);
     }
+
+    private void createFood() {
+        Random rand = new Random();
+
+        // Ustawienie wymiarów jedzenia
+        double foodWidth = 10;
+        double foodHeight = 10;
+
+        // Generacja losowych współrzędnych w ramach GamePane
+        double x = rand.nextDouble() * (440 - foodWidth);
+        double y = rand.nextDouble() * (270 - foodHeight);
+
+        //Tworzenie jedzenia
+        Food = new Rectangle(x, y, foodWidth, foodHeight);
+        Food.setFill(Color.GREEN);
+
+        // Dodanie jedzenie do GamePane
+        GamePane.getChildren().add(Food);
+    }
+
+    /* Zwiekszanie wyniku */
+    private void incScore(int value) {
+        score += value;
+        scoreLabel.setText("Wynik = " + score);
+    }
+
+    /* Sprawdzanie kolizji glowy węża z granicami jedzenia i zwiekszanie wyniku */
+    private void checkCollisionWithFood() {
+        if (head.intersects(Food.getBoundsInLocal())) {
+            GamePane.getChildren().remove(Food);
+            incSnakeSize(3);
+            incScore(1);
+            createFood();
+        }
+    }
+
+    /* Zwiekszenie rozmiarów węża na podstawie rodzaju zjedzoneog jedzenia */
+    private void incSnakeSize(int size) {
+        for (int i = 0; i < size; i++) {
+            // Pobierz pozycję ostatniego widocznego segmentu
+            Rectangle tail = snakeSegments.getLast();
+
+            // Tworzenie nowego segmentu na koncu
+            Rectangle newSegment = new Rectangle(tail.getX(), tail.getY(), tail.getWidth(), tail.getHeight());
+            newSegment.setFill(Color.BLACK); // Ustaw kolor nowego segmentu na czarny (widoczny)
+
+            // Dodawanie nowego segmentu do listy i GamePane
+            snakeSegments.add(newSegment);
+            Platform.runLater(() -> GamePane.getChildren().add(newSegment));
+        }
+    }
+    private void checkCollisionWithSelf() {
+        // Sprawdzanie kolizji tylko jeśli wąż ma więcej niż 22 segmenty
+        if (snakeSegments.size() > 22) {
+            for (int i = 23; i < snakeSegments.size(); i++) {
+                Rectangle segment = snakeSegments.get(i);
+                if (head.getBoundsInParent().intersects(segment.getBoundsInParent())) {
+                    // Kolizja wykryta, zatrzymaj grę i pokaż ekran końca gry
+                    gameLoop.stop();
+                    ShowGameOverPane();
+                    break; // Wyjdź z pętli po wykryciu pierwszej kolizji
+                }
+            }
+        }
+    }
+
 }
+    //NOWE LALALLALLA
 
