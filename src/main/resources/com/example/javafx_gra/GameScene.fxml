@@ -3,23 +3,12 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx_gra.GameController">
-   <children>
-      <Label layoutX="14.0" layoutY="14.0" prefHeight="31.0" prefWidth="52.0" text="Wynik = " />
-      <Label fx:id="scoreLabel" layoutX="66.0" layoutY="21.0" />
-      <Pane layoutX="71.0" layoutY="60.0" prefHeight="281.0" prefWidth="459.0" style="-fx-background-color: #000000;" />
-      <Pane fx:id="GamePane" layoutX="81.0" layoutY="66.0" prefHeight="270.0" prefWidth="440.0" style="-fx-background-color: #808080;" />
-      <Pane fx:id="GameOverPane" opacity="0.0" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #000000;">
-         <children>
-            <Label alignment="CENTER" layoutX="132.0" layoutY="128.0" prefHeight="144.0" prefWidth="337.0" text="Ale lipa" textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font size="73.0" />
-               </font>
-            </Label>
-         </children>
-      </Pane>
-   </children>
+<AnchorPane fx:id="GameSceneBase" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx_gra.GameController">
+   <Label layoutX="14.0" layoutY="14.0" prefHeight="31.0" prefWidth="52.0" text="Wynik = "/>
+   <Label fx:id="scoreLabel" layoutX="66.0" layoutY="21.0"/>
+   <Pane layoutX="71.0" layoutY="60.0" prefHeight="281.0" prefWidth="459.0" style="-fx-background-color: #000000;"/>
+   <Pane fx:id="GamePane" layoutX="81.0" layoutY="66.0" prefHeight="270.0" prefWidth="440.0"
+         style="-fx-background-color: #808080;"/>
 </AnchorPane>
