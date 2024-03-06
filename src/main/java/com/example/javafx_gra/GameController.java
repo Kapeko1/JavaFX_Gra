@@ -18,7 +18,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import java.io.IOException;
+
+import java.io.*;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +47,6 @@ public class GameController implements Initializable {
     }
 
     private Direction currentDirection = Direction.NONE;
-
 
     @FXML
     /* Wywołanie metody initialize, która uruchamiana jest wraz z uruchomieniem GameController */
@@ -196,6 +196,7 @@ public class GameController implements Initializable {
         }
 
         GameOverPane.setVisible(true);
+        saveScore(score);
     }
 
     private void createFood() {
@@ -280,5 +281,14 @@ public class GameController implements Initializable {
         }
     }
 
+        /* Zapisanie każdego wyniku do pliku */
+    private void saveScore(int score) {
+        String filename = "HighScores.txt";
+        try (PrintWriter out = new PrintWriter(new FileWriter(filename, true))) {
+            out.println(score); // Dopisuje score do pliku z nową linią
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
