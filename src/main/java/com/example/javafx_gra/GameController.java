@@ -210,7 +210,8 @@ public class GameController implements Initializable {
         double y = rand.nextDouble() * (270 - foodHeight);
 
         int color = rand.nextInt(10)+1;
-        //Tworzenie jedzenia
+
+        //Tworzenie jedzenia roznej jakosci
         if(color >= 1 && color<5) {
             Food = new Rectangle(x, y, foodWidth, foodHeight);
             Food.setFill(Color.GREEN);

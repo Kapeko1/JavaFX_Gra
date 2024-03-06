@@ -3,9 +3,16 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Rectangle?>
 
 <AnchorPane fx:id="GameSceneBase" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx_gra.GameController">
    <Label fx:id="scoreLabel" layoutX="66.0" layoutY="21.0" prefHeight="17.0" prefWidth="104.0" />
    <Pane layoutX="71.0" layoutY="60.0" prefHeight="281.0" prefWidth="459.0" style="-fx-background-color: #000000;" />
    <Pane fx:id="GamePane" layoutX="81.0" layoutY="66.0" prefHeight="270.0" prefWidth="440.0" style="-fx-background-color: #808080;" />
+   <Label layoutX="50.0" layoutY="360.0" text="1p." />
+   <Label layoutX="120.0" layoutY="360.0" text="3p." />
+   <Label layoutX="190.0" layoutY="360.0" text="5p." />
+   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="10.0" layoutX="70.0" layoutY="365.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: GREEN;" width="10.0" />
+   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="10.0" layoutX="140.0" layoutY="365.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: RED;" width="10.0" />
+   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="10.0" layoutX="210.0" layoutY="365.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: BLUE;" width="10.0" />
 </AnchorPane>
