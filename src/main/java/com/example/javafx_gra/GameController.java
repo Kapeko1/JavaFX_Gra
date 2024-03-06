@@ -209,10 +209,18 @@ public class GameController implements Initializable {
         double x = rand.nextDouble() * (440 - foodWidth);
         double y = rand.nextDouble() * (270 - foodHeight);
 
+        int color = rand.nextInt(10)+1;
         //Tworzenie jedzenia
-        Food = new Rectangle(x, y, foodWidth, foodHeight);
-        Food.setFill(Color.GREEN);
-
+        if(color >= 1 && color<5) {
+            Food = new Rectangle(x, y, foodWidth, foodHeight);
+            Food.setFill(Color.GREEN);
+        } else if (color>=5 && color<8) {
+            Food = new Rectangle(x, y, foodWidth, foodHeight);
+            Food.setFill(Color.RED);
+        } else if (color>=8 && color<10) {
+            Food = new Rectangle(x, y, foodWidth, foodHeight);
+            Food.setFill(Color.BLUE);
+        }
         // Dodanie jedzenie do GamePane
         GamePane.getChildren().add(Food);
     }
@@ -226,9 +234,17 @@ public class GameController implements Initializable {
     /* Sprawdzanie kolizji glowy węża z granicami jedzenia i zwiekszanie wyniku */
     private void checkCollisionWithFood() {
         if (head.intersects(Food.getBoundsInLocal())) {
-            GamePane.getChildren().remove(Food);
-            incSnakeSize(3);
-            incScore(1);
+            GamePane.getChildren().remove(this.Food);
+            if (Food.getFill() == Color.GREEN) {
+                incSnakeSize(3);
+                incScore(1);
+            }else if (Food.getFill() == Color.RED){
+                incSnakeSize(9);
+                incScore(3);
+            } else if (Food.getFill() == Color.BLUE) {
+                incSnakeSize(14);
+                incScore(5);
+            }
             createFood();
         }
     }
@@ -264,5 +280,4 @@ public class GameController implements Initializable {
     }
 
 }
-    //NOWE LALALLALLA
 
