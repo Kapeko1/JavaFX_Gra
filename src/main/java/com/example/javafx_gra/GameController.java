@@ -2,6 +2,7 @@ package com.example.javafx_gra;
 
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -146,7 +147,7 @@ public class GameController implements Initializable {
     public void ShowGameOverPane() {
         if (GameOverPane == null) {
             VBox gameOverVBox = new VBox(10);
-            //gameOverVBox.setAlignment(Pos.CENTER);
+            gameOverVBox.setAlignment(Pos.CENTER);
 
             Button gameOverButton = new Button("Główne menu");
             Label gameOverLabel = new Label("Ale lipa");
