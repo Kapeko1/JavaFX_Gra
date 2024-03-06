@@ -165,6 +165,7 @@ public class GameController implements Initializable {
         }
     }
 
+    /* Wywołanie ekranu konca gry */
     public void ShowGameOverPane() {
         if (GameOverPane == null) {
             VBox gameOverVBox = new VBox(10);
@@ -198,6 +199,7 @@ public class GameController implements Initializable {
         GameOverPane.setVisible(true);
     }
 
+    /* Metoda tworzaca róznego rodzaju jedzenie */
     private void createFood() {
         Random rand = new Random();
 
@@ -265,6 +267,8 @@ public class GameController implements Initializable {
             Platform.runLater(() -> GamePane.getChildren().add(newSegment));
         }
     }
+
+    /* Sprawdzenie kolizji z ciałem węża */
     private void checkCollisionWithSelf() {
         // Sprawdzanie kolizji tylko jeśli wąż ma więcej niż 22 segmenty
         if (snakeSegments.size() > 22) {
