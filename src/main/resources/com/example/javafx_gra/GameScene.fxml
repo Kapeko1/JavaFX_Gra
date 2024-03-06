@@ -3,13 +3,23 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="GameSceneBase" prefHeight="464.0" prefWidth="710.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx_gra.GameController">
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx_gra.GameController">
    <children>
-      <Label fx:id="scoreLabel" prefHeight="31.0" prefWidth="119.0" AnchorPane.leftAnchor="66" AnchorPane.topAnchor="21" />
-
-      <!-- Przykład kotwiczenia Pane, aby rozciągał się z marginesami -->
-      <Pane style="-fx-background-color: #000000;" AnchorPane.bottomAnchor="60" AnchorPane.leftAnchor="60" AnchorPane.rightAnchor="60" AnchorPane.topAnchor="60" />
-      <Pane fx:id="GamePane" style="-fx-background-color: #808080;" AnchorPane.bottomAnchor="66" AnchorPane.leftAnchor="66" AnchorPane.rightAnchor="66" AnchorPane.topAnchor="66" />
+      <Label layoutX="14.0" layoutY="14.0" prefHeight="31.0" prefWidth="52.0" text="Wynik = " />
+      <Label fx:id="scoreLabel" layoutX="66.0" layoutY="21.0" />
+      <Pane layoutX="71.0" layoutY="60.0" prefHeight="281.0" prefWidth="459.0" style="-fx-background-color: #000000;" />
+      <Pane fx:id="GamePane" layoutX="81.0" layoutY="66.0" prefHeight="270.0" prefWidth="440.0" style="-fx-background-color: #808080;" />
+      <Pane fx:id="GameOverPane" opacity="0.0" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #000000;">
+         <children>
+            <Label alignment="CENTER" layoutX="132.0" layoutY="128.0" prefHeight="144.0" prefWidth="337.0" text="Ale lipa" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font size="73.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
    </children>
 </AnchorPane>
