@@ -7,13 +7,13 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Rectangle?>
 
-<AnchorPane fx:id="GameSceneBase" prefHeight="420.0" prefWidth="635.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx_gra.GameController">
+<AnchorPane fx:id="gameSceneBase" prefHeight="420.0" prefWidth="635.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx_gra.GameController">
    <ImageView fitHeight="420.0" fitWidth="635.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true">
-      <Image url="@bg_snake.png"/>
+      <Image url="@bg_snake.png" />
    </ImageView>
    <Label fx:id="scoreLabel" layoutX="420.0" layoutY="305.0" prefHeight="17.0" prefWidth="104.0" />
-   <Pane layoutX="97.0" layoutY="18.0" prefHeight="262.0" prefWidth="440.0" style="-fx-background-color: #000000;" />
-   <Pane fx:id="GamePane" layoutX="108.0" layoutY="25.0" prefHeight="249.0" prefWidth="417.0" style="-fx-background-color: #808080;" />
+   <Pane fx:id="borderPane" layoutX="97.0" layoutY="18.0" prefHeight="262.0" prefWidth="440.0" style="-fx-background-color: #000000;" />
+   <Pane fx:id="gamePane" layoutX="108.0" layoutY="25.0" prefHeight="249.0" prefWidth="417.0" style="-fx-background-color: #808080;" />
    <Label layoutX="100.0" layoutY="305.0" text="1p." />
    <Label layoutX="200.0" layoutY="305.0" text="3p." />
    <Label layoutX="300.0" layoutY="305.0" text="5p." />

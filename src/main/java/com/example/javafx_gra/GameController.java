@@ -2,12 +2,11 @@ package com.example.javafx_gra;
 
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -16,27 +15,24 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.fxml.Initializable;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
+import javafx.scene.image.ImageView;
 import java.io.*;
 import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
-import java.util.ResourceBundle;
-import java.util.ArrayList;
+import java.util.*;
 
 
 public class GameController implements Initializable {
     @FXML
     private Label scoreLabel;
     @FXML
-    private Pane GamePane;
+    private Pane gamePane;
     @FXML
-    private Pane GameOverPane;
+    private AnchorPane gameSceneBase;
     @FXML
-    private AnchorPane GameSceneBase;
+    private Pane borderPane;
+
+    private final Button retryGameButton = new Button();
     private int score = 0;
     private final List<Rectangle> snakeSegments = new ArrayList<>(); // Lista segmentów węża
     private Rectangle head;
@@ -53,7 +49,7 @@ public class GameController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         createPlayer();
         scoreLabel.setText("Wynik = " + score);
-        GamePane.requestFocus();
+        gamePane.requestFocus();
         setControl();
         gameLoop.start();
     }
@@ -61,14 +57,14 @@ public class GameController implements Initializable {
     /* Tworzenie nowego gracza o określonych wymiarach */
     private void createPlayer() {
         /* Ustawienie rozmiarów gracza:
-        v1 = x w GamePane
-        v2 = y w GamePane
+        v1 = x w gamePane
+        v2 = y w gamePane
         v3 = szerokosc gracza
         v4 = wysokosc gracza */
         head = new Rectangle(200, 130, 10, 10);
         head.setFill(Color.BLACK);
         snakeSegments.add(head);
-        GamePane.getChildren().add(head);
+        gamePane.getChildren().add(head);
 
         /* Obowiazkowy fragment tworzący swojego rodzaju transparentny ogon za glowa weza
         * Jego rozmiary ustalilem metoda prob i bledow tak zeby gra nie przerywala sie
@@ -77,13 +73,13 @@ public class GameController implements Initializable {
             Rectangle transparentSegment = new Rectangle(220 - (i + 1) * 10, 135, 10, 10); // Pozycjonowanie za głową
             transparentSegment.setFill(Color.TRANSPARENT);
             snakeSegments.add(transparentSegment);
-            GamePane.getChildren().add(transparentSegment);
+            gamePane.getChildren().add(transparentSegment);
         }
     }
 
     /* Uruchomienie czytania naciscniec klawiszy*/
     public void setControl() {
-        Platform.runLater(() -> GamePane.getScene().setOnKeyPressed(this::handleKeyPress));
+        Platform.runLater(() -> gamePane.getScene().setOnKeyPressed(this::handleKeyPress));
     }
 
     /* Zmiana aktualnego kierunku gracza zaleznie od nacisnietego klawisza */
@@ -140,12 +136,12 @@ public class GameController implements Initializable {
         double newX = head.getX() + dx;
         double newY = head.getY() + dy;
 
-        // Sprawdzanie kolizji z krawędzią GamePane i aktualizacja pozycji głowy
-        if (newX >= 0 && newX + head.getWidth() <= GamePane.getWidth() && newY >= 0 && newY + head.getHeight() <= GamePane.getHeight()) {
+        // Sprawdzanie kolizji z krawędzią gamePane i aktualizacja pozycji głowy
+        if (newX >= 0 && newX + head.getWidth() <= gamePane.getWidth() && newY >= 0 && newY + head.getHeight() <= gamePane.getHeight()) {
             head.setX(newX);
             head.setY(newY);
         } else {
-            ShowGameOverPane();
+            showgameOverPane();
         }
 
         for (int i = snakeSegments.size() - 1; i > 0; i--) {
@@ -158,11 +154,11 @@ public class GameController implements Initializable {
     }
 
     /* Wywołanie głownego menu */
-    public void ShowMainMenu() {
+    public void showMainMenu() {
         try {
             Parent mainMenu = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainMenu.fxml")));
             Scene scene = new Scene(mainMenu);
-            Stage window = (Stage) GameSceneBase.getScene().getWindow();
+            Stage window = (Stage) gameSceneBase.getScene().getWindow();
             window.setScene(scene);
             window.show();
         } catch (IOException ignored) {
@@ -170,39 +166,44 @@ public class GameController implements Initializable {
     }
 
     /* Wywołanie ekranu przegranej gry */
-    public void ShowGameOverPane() {
-        gameLoop.stop();
-        if (GameOverPane == null) {
-            VBox gameOverVBox = new VBox(10);
-            gameOverVBox.setAlignment(Pos.CENTER);
+    public void showgameOverPane() {
+            gameLoop.stop();
+            Pane gameOverPane = new Pane();
+            gameOverPane.setPrefSize(635, 420);
 
-            Button gameOverButton = new Button("Główne menu");
-            Label gameOverLabel = new Label("Ale lipa");
+            // Konfiguracja tła
+            ImageView gameOverImage = new ImageView();
+            gameOverImage.setFitHeight(420.0);
+            gameOverImage.setFitWidth(635.0);
+            gameOverImage.setPickOnBounds(true);
+            gameOverImage.setPreserveRatio(true);
+            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("gameOver_snake.png")));
+            gameOverImage.setImage(image);
 
-            // Ustawienie akcji dla GameOverButton
-            gameOverButton.setOnAction(event -> ShowMainMenu());
+            //Konfiguracja przyciskow retry i mainMenu
+            Button retryGameButton = new Button();
+            retryGameButton.setLayoutX(229.0);
+            retryGameButton.setLayoutY(296.0);
+            retryGameButton.setPrefHeight(35.0);
+            retryGameButton.setPrefWidth(206.0);
+            retryGameButton.setStyle("-fx-background-color: TRANSPARENT;");
+            retryGameButton.setOnAction(e -> retryGame());
 
-            // Ustawienia dla GameOverLabel
-            gameOverLabel.setFont(new Font("System", 48)); // Ustawienie rozmiaru fontu
-            gameOverLabel.setTextFill(Color.WHITE); // Ustawienie koloru tekstu
+            Button goBackToMainMenuButton = new Button();
+            goBackToMainMenuButton.setLayoutX(229.0);
+            goBackToMainMenuButton.setLayoutY(353.0);
+            goBackToMainMenuButton.setPrefHeight(35.0);
+            goBackToMainMenuButton.setPrefWidth(206.0);
+            goBackToMainMenuButton.setStyle("-fx-background-color: TRANSPARENT;");
+            goBackToMainMenuButton.setOnAction(e -> showMainMenu());
 
-            // Dodanie GameOverLabel i GameOverButton do gameOverVBox
-            gameOverVBox.getChildren().addAll(gameOverLabel, gameOverButton);
+            // Dodanie elementow do gameOverPane a nastepnie do glownego Pane
+            gameOverPane.getChildren().add(gameOverImage);
+            gameOverPane.getChildren().add(goBackToMainMenuButton);
+            gameOverPane.getChildren().add(retryGameButton);
+            gameSceneBase.getChildren().add(gameOverPane);
 
-            GameOverPane = new Pane();
-            GameOverPane.getChildren().add(gameOverVBox);
-            GameOverPane.setPrefSize(635, 420);
-
-            // Ustawienie gameOverVBox na środku GameOverPane
-            gameOverVBox.setLayoutX(260);
-            gameOverVBox.setLayoutY(130);
-
-            GameOverPane.setStyle("-fx-background-color: black;");
-            GameSceneBase.getChildren().add(GameOverPane);
-        }
-
-        GameOverPane.setVisible(true);
-        saveScore(score);
+            saveScore(score);
     }
 
     /* Odswiezanie tablicy z jedzeniem */
@@ -216,7 +217,7 @@ public class GameController implements Initializable {
         for (int i = 0; i<foodsTable.length; i++) {
             if (foodsTable[i] == null){
 
-            // Generacja losowych współrzędnych w ramach GamePane
+            // Generacja losowych współrzędnych w ramach gamePane
             double x = rand.nextDouble() * (417 - foodWidth);
             double y = rand.nextDouble() * (249 - foodHeight);
 
@@ -234,7 +235,7 @@ public class GameController implements Initializable {
             }
             foodsTable[i] = food;
             final Rectangle finalFood = food;
-            Platform.runLater(() -> GamePane.getChildren().add(finalFood));
+            Platform.runLater(() -> gamePane.getChildren().add(finalFood));
             }
         }
     }
@@ -258,8 +259,8 @@ public class GameController implements Initializable {
                 }
                 incScore(pointsToAdd);
                 incSnakeSize(sizeToAdd);
-                // Usuniecie zjedzonego jedzenie z GamePane oraz tablicy
-                GamePane.getChildren().remove(foodsTable[i]);
+                // Usuniecie zjedzonego jedzenie z gamePane oraz tablicy
+                gamePane.getChildren().remove(foodsTable[i]);
                 foodsTable[i] = null;
             }
         }
@@ -281,9 +282,9 @@ public class GameController implements Initializable {
             Rectangle newSegment = new Rectangle(tail.getX(), tail.getY(), tail.getWidth(), tail.getHeight());
             newSegment.setFill(Color.BLACK); // Ustaw kolor nowego segmentu na czarny (widoczny)
 
-            // Dodawanie nowego segmentu do listy i GamePane
+            // Dodawanie nowego segmentu do listy i gamePane
             snakeSegments.add(newSegment);
-            Platform.runLater(() -> GamePane.getChildren().add(newSegment));
+            Platform.runLater(() -> gamePane.getChildren().add(newSegment));
         }
     }
 
@@ -295,7 +296,7 @@ public class GameController implements Initializable {
             for (int i = 23; i < snakeSegments.size(); i++) {
                 Rectangle segment = snakeSegments.get(i);
                 if (head.getBoundsInParent().intersects(segment.getBoundsInParent())) {
-                    ShowGameOverPane();
+                    showgameOverPane();
                     break; // Wyjście z pętli
                 }
             }
@@ -311,5 +312,28 @@ public class GameController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    /* Zresetowanie gry do stanu wyjsciowego */
+    public void retryGame() {
+        //Usuniecie gameOverPane
+        gameSceneBase.getChildren().removeIf(node -> node instanceof Pane && node != gamePane && node != borderPane);
+
+        // Czyszczenie istniejących segmentów węża i jedzenia
+        gamePane.getChildren().clear();
+        snakeSegments.clear();
+        Arrays.fill(foodsTable, null);
+
+        // Resetowanie zmiennych gry do stanu początkowego
+        score = 0;
+        currentDirection = Direction.NONE;
+
+        // Ponowne inicjowanie gracza i elementów gry
+        createPlayer();
+        scoreLabel.setText("Wynik = " + score);
+
+        // Ponowne uruchomienie pętli gry
+        gameLoop.start();
+    }
+
 }
 
