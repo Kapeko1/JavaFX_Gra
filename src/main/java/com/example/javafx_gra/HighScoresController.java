@@ -3,12 +3,13 @@ package com.example.javafx_gra;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.BufferedReader;
@@ -19,7 +20,6 @@ import java.util.*;
 
 public class HighScoresController implements Initializable {
     public Button goBackToMainMenuButton;
-    public VBox scoresVbox;
     @FXML
     private AnchorPane highScoresPane;
     @FXML
@@ -28,21 +28,7 @@ public class HighScoresController implements Initializable {
     private Label h2;
     @FXML
     private Label h3;
-    @FXML
-    private Label h4;
-    @FXML
-    private Label h5;
-    @FXML
-    private Label h6;
-    @FXML
-    private Label h7;
-    @FXML
-    private Label h8;
-    @FXML
-    private Label h9;
-    @FXML
-    private Label h10;
-
+    /* Utworzenie listy integerów z pliku, każdy wers to nowa wartosc do talbicy  */
     private List<Integer> readScores() {
         List<Integer> scores = new ArrayList<>();
         String filename = "HighScores.txt";
@@ -77,16 +63,31 @@ public class HighScoresController implements Initializable {
     } catch (
     IOException ignored) {}
     }
-   private void fillHighScores(){
-       List<Integer> topScores = readScores().stream().limit(10).toList();
-       Label[] labels = new Label[]{h1, h2, h3, h4, h5, h6, h7, h8, h9, h10};
-       for (int i = 0; i < labels.length; i++) {
-           if (i < topScores.size()) {
-
-               labels[i].setText( (i+1)+".    " + topScores.get(i) + " punkty");
-           } else {
-               labels[i].setText((i+1)+". Puste");
-           }
-       }
+    /* Wypełnienie sceny wynikami */
+    private void fillHighScores(){
+        URL fontUrl = getClass().getResource("JUNGLEFE.ttf");
+        if (fontUrl != null) {
+            Font customFont = Font.loadFont(fontUrl.toExternalForm(), 19);
+            if (customFont != null) {
+                Label[] labels = new Label[]{h1, h2, h3};
+                List<Integer> topScores = readScores().stream().limit(3).toList();
+                for (int i = 0; i < labels.length; i++) {
+                    if (i < topScores.size()) {
+                        labels[i].setAlignment(Pos.CENTER);
+                        labels[i].setFont(customFont);
+                        labels[i].setText(topScores.get(i).toString());
+                    } else {
+                        labels[i].setAlignment(Pos.CENTER);
+                        labels[i].setFont(customFont);
+                        labels[i].setText("puste");
+                    }
+                }
+            } else {
+                System.err.println("Nie udało się załadować czcionki.");
+            }
+        } else {
+            System.err.println("Nie znaleziono pliku czcionki.");
+        }
     }
+
 }
