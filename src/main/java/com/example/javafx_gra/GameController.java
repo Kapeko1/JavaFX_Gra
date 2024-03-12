@@ -15,6 +15,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.fxml.Initializable;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.image.ImageView;
 import java.io.*;
@@ -31,6 +32,12 @@ public class GameController implements Initializable {
     private AnchorPane gameSceneBase;
     @FXML
     private Pane borderPane;
+    @FXML
+    private Label l1;
+    @FXML
+    private Label l2;
+    @FXML
+    private Label l3;
 
     private final Button retryGameButton = new Button();
     private int score = 0;
@@ -39,16 +46,24 @@ public class GameController implements Initializable {
     private final Rectangle[] foodsTable = new Rectangle[5];
 
     public enum Direction {
-        UP, DOWN, LEFT, RIGHT, NONE
-    }
+        UP, DOWN, LEFT, RIGHT, NONE}
 
     private Direction currentDirection = Direction.NONE;
 
     @FXML
     /* Wywołanie metody initialize, która uruchamiana jest wraz z uruchomieniem GameController */
     public void initialize(URL location, ResourceBundle resources) {
-        createPlayer();
+        // Ustawienie niestandardowych czcionek i ich rozmiaru
+        URL fontUrl = getClass().getResource("JUNGLEFE.ttf");
+        Font customFont = Font.loadFont(Objects.requireNonNull(fontUrl).toExternalForm(), 19);
+        l1.setFont(customFont);
+        l2.setFont(customFont);
+        l3.setFont(customFont);
+        scoreLabel.setFont(customFont);
         scoreLabel.setText("Wynik = " + score);
+
+
+        createPlayer();
         gamePane.requestFocus();
         setControl();
         gameLoop.start();
