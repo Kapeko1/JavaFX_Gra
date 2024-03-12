@@ -65,8 +65,8 @@ public class GameController implements Initializable {
         v2 = y w GamePane
         v3 = szerokosc gracza
         v4 = wysokosc gracza */
-        head = new Rectangle(220, 135, 10, 10);
-        head.setFill(Color.DARKVIOLET);
+        head = new Rectangle(200, 130, 10, 10);
+        head.setFill(Color.BLACK);
         snakeSegments.add(head);
         GamePane.getChildren().add(head);
 
@@ -191,10 +191,10 @@ public class GameController implements Initializable {
 
             GameOverPane = new Pane();
             GameOverPane.getChildren().add(gameOverVBox);
-            GameOverPane.setPrefSize(600, 400);
+            GameOverPane.setPrefSize(635, 420);
 
             // Ustawienie gameOverVBox na środku GameOverPane
-            gameOverVBox.setLayoutX(230);
+            gameOverVBox.setLayoutX(260);
             gameOverVBox.setLayoutY(130);
 
             GameOverPane.setStyle("-fx-background-color: black;");
@@ -217,8 +217,8 @@ public class GameController implements Initializable {
             if (foodsTable[i] == null){
 
             // Generacja losowych współrzędnych w ramach GamePane
-            double x = rand.nextDouble() * (440 - foodWidth);
-            double y = rand.nextDouble() * (270 - foodHeight);
+            double x = rand.nextDouble() * (417 - foodWidth);
+            double y = rand.nextDouble() * (249 - foodHeight);
 
             Rectangle food = new Rectangle(x, y, foodWidth, foodHeight);
 
@@ -226,11 +226,11 @@ public class GameController implements Initializable {
 
             //Tworzenie jedzenia roznej jakosci
             if (color >= 1 && color < 5) {
-                food.setFill(Color.GREEN);
+                food.setFill(Color.ANTIQUEWHITE);
             } else if (color >= 5 && color < 8) {
-                food.setFill(Color.RED);
+                food.setFill(Color.GREEN);
             } else if (color >= 8 && color < 10) {
-                food.setFill(Color.BLUE);
+                food.setFill(Color.DARKBLUE);
             }
             foodsTable[i] = food;
             final Rectangle finalFood = food;
@@ -246,13 +246,13 @@ public class GameController implements Initializable {
                 Color foodColor = (Color) foodsTable[i].getFill();
                 int pointsToAdd = 0;
                 int sizeToAdd = 0;
-                if (foodColor.equals(Color.GREEN)) {
+                if (foodColor.equals(Color.ANTIQUEWHITE)) {
                     pointsToAdd = 1;
                     sizeToAdd = 3;
-                } else if (foodColor.equals(Color.RED)) {
+                } else if (foodColor.equals(Color.GREEN)) {
                     pointsToAdd = 3;
                     sizeToAdd = 9;
-                } else if (foodColor.equals(Color.BLUE)) {
+                } else if (foodColor.equals(Color.DARKBLUE)) {
                     pointsToAdd = 5;
                     sizeToAdd = 14;
                 }
