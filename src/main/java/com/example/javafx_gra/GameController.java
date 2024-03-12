@@ -40,7 +40,7 @@ public class GameController implements Initializable {
     private int score = 0;
     private final List<Rectangle> snakeSegments = new ArrayList<>(); // Lista segmentów węża
     private Rectangle head;
-    private Rectangle Food;
+    private final Rectangle[] foodsTable = new Rectangle[5];
 
     public enum Direction {
         UP, DOWN, LEFT, RIGHT, NONE
@@ -56,7 +56,6 @@ public class GameController implements Initializable {
         GamePane.requestFocus();
         setControl();
         gameLoop.start();
-        createFood();
     }
 
     /* Tworzenie nowego gracza o określonych wymiarach */
@@ -67,9 +66,13 @@ public class GameController implements Initializable {
         v3 = szerokosc gracza
         v4 = wysokosc gracza */
         head = new Rectangle(220, 135, 10, 10);
-        head.setFill(Color.BLACK);
+        head.setFill(Color.DARKVIOLET);
         snakeSegments.add(head);
         GamePane.getChildren().add(head);
+
+        /* Obowiazkowy fragment tworzący swojego rodzaju transparentny ogon za glowa weza
+        * Jego rozmiary ustalilem metoda prob i bledow tak zeby gra nie przerywala sie
+        * od razu po zjedzeniu Food oraz zeby umozliwic dynamiczne skrecanie */
         for (int i = 0; i < 22; i++) {
             Rectangle transparentSegment = new Rectangle(220 - (i + 1) * 10, 135, 10, 10); // Pozycjonowanie za głową
             transparentSegment.setFill(Color.TRANSPARENT);
@@ -105,7 +108,7 @@ public class GameController implements Initializable {
         }
     }
 
-    /* Uruchomienie automatycznego ruchu gracza */
+    /* GŁÓWNA PĘTLA GRY! */
     private final AnimationTimer gameLoop = new AnimationTimer() {
         @Override
         public void handle(long now) {
@@ -125,8 +128,9 @@ public class GameController implements Initializable {
                 case NONE:
                     break; // Czeka na ruch gracza
             }
-            checkCollisionWithFood();
             checkCollisionWithSelf();
+            refreshFoodInTable();
+            checkCollisionWithFood();
         }
     };
 
@@ -135,12 +139,12 @@ public class GameController implements Initializable {
         Rectangle head = snakeSegments.getFirst();
         double newX = head.getX() + dx;
         double newY = head.getY() + dy;
+
         // Sprawdzanie kolizji z krawędzią GamePane i aktualizacja pozycji głowy
         if (newX >= 0 && newX + head.getWidth() <= GamePane.getWidth() && newY >= 0 && newY + head.getHeight() <= GamePane.getHeight()) {
             head.setX(newX);
             head.setY(newY);
         } else {
-            gameLoop.stop();
             ShowGameOverPane();
         }
 
@@ -165,7 +169,9 @@ public class GameController implements Initializable {
         }
     }
 
+    /* Wywołanie ekranu przegranej gry */
     public void ShowGameOverPane() {
+        gameLoop.stop();
         if (GameOverPane == null) {
             VBox gameOverVBox = new VBox(10);
             gameOverVBox.setAlignment(Pos.CENTER);
@@ -199,56 +205,70 @@ public class GameController implements Initializable {
         saveScore(score);
     }
 
-    private void createFood() {
+    /* Odswiezanie tablicy z jedzeniem */
+    private void refreshFoodInTable() {
         Random rand = new Random();
 
         // Ustawienie wymiarów jedzenia
         double foodWidth = 10;
         double foodHeight = 10;
 
-        // Generacja losowych współrzędnych w ramach GamePane
-        double x = rand.nextDouble() * (440 - foodWidth);
-        double y = rand.nextDouble() * (270 - foodHeight);
+        for (int i = 0; i<foodsTable.length; i++) {
+            if (foodsTable[i] == null){
 
-        int color = rand.nextInt(10)+1;
+            // Generacja losowych współrzędnych w ramach GamePane
+            double x = rand.nextDouble() * (440 - foodWidth);
+            double y = rand.nextDouble() * (270 - foodHeight);
 
-        //Tworzenie jedzenia roznej jakosci
-        if(color >= 1 && color<5) {
-            Food = new Rectangle(x, y, foodWidth, foodHeight);
-            Food.setFill(Color.GREEN);
-        } else if (color>=5 && color<8) {
-            Food = new Rectangle(x, y, foodWidth, foodHeight);
-            Food.setFill(Color.RED);
-        } else if (color>=8 && color<10) {
-            Food = new Rectangle(x, y, foodWidth, foodHeight);
-            Food.setFill(Color.BLUE);
+            Rectangle food = new Rectangle(x, y, foodWidth, foodHeight);
+
+            int color = rand.nextInt(9) + 1;
+
+            //Tworzenie jedzenia roznej jakosci
+            if (color >= 1 && color < 5) {
+                food.setFill(Color.GREEN);
+            } else if (color >= 5 && color < 8) {
+                food.setFill(Color.RED);
+            } else if (color >= 8 && color < 10) {
+                food.setFill(Color.BLUE);
+            }
+            foodsTable[i] = food;
+            final Rectangle finalFood = food;
+            Platform.runLater(() -> GamePane.getChildren().add(finalFood));
+            }
         }
-        // Dodanie jedzenie do GamePane
-        GamePane.getChildren().add(Food);
+    }
+
+    /* Sprawdzanie kolizji glowy węża z granicami jedzenia i zwiekszanie wyniku */
+    private void checkCollisionWithFood() {
+        for (int i = 0; i < foodsTable.length; i++) {
+            if (foodsTable[i] != null && head.getBoundsInParent().intersects(foodsTable[i].getBoundsInParent())) {
+                Color foodColor = (Color) foodsTable[i].getFill();
+                int pointsToAdd = 0;
+                int sizeToAdd = 0;
+                if (foodColor.equals(Color.GREEN)) {
+                    pointsToAdd = 1;
+                    sizeToAdd = 3;
+                } else if (foodColor.equals(Color.RED)) {
+                    pointsToAdd = 3;
+                    sizeToAdd = 9;
+                } else if (foodColor.equals(Color.BLUE)) {
+                    pointsToAdd = 5;
+                    sizeToAdd = 14;
+                }
+                incScore(pointsToAdd);
+                incSnakeSize(sizeToAdd);
+                // Usuniecie zjedzonego jedzenie z GamePane oraz tablicy
+                GamePane.getChildren().remove(foodsTable[i]);
+                foodsTable[i] = null;
+            }
+        }
     }
 
     /* Zwiekszanie wyniku */
     private void incScore(int value) {
         score += value;
         scoreLabel.setText("Wynik = " + score);
-    }
-
-    /* Sprawdzanie kolizji glowy węża z granicami jedzenia i zwiekszanie wyniku */
-    private void checkCollisionWithFood() {
-        if (head.intersects(Food.getBoundsInLocal())) {
-            GamePane.getChildren().remove(this.Food);
-            if (Food.getFill() == Color.GREEN) {
-                incSnakeSize(3);
-                incScore(1);
-            }else if (Food.getFill() == Color.RED){
-                incSnakeSize(9);
-                incScore(3);
-            } else if (Food.getFill() == Color.BLUE) {
-                incSnakeSize(14);
-                incScore(5);
-            }
-            createFood();
-        }
     }
 
     /* Zwiekszenie rozmiarów węża na podstawie rodzaju zjedzoneog jedzenia */
@@ -266,22 +286,23 @@ public class GameController implements Initializable {
             Platform.runLater(() -> GamePane.getChildren().add(newSegment));
         }
     }
+
+    /* Sprawdzenie kolizji z segmentami */
     private void checkCollisionWithSelf() {
-        // Sprawdzanie kolizji tylko jeśli wąż ma więcej niż 22 segmenty
+        /* Sprawdzanie kolizji tylko jeśli wąż ma więcej niż 22 segmenty
+        *  Musiałem to zastosować z powodu nietykalnych elementów za głowa weza */
         if (snakeSegments.size() > 22) {
             for (int i = 23; i < snakeSegments.size(); i++) {
                 Rectangle segment = snakeSegments.get(i);
                 if (head.getBoundsInParent().intersects(segment.getBoundsInParent())) {
-                    // Kolizja wykryta, zatrzymaj grę i pokaż ekran końca gry
-                    gameLoop.stop();
                     ShowGameOverPane();
-                    break; // Wyjdź z pętli po wykryciu pierwszej kolizji
+                    break; // Wyjście z pętli
                 }
             }
         }
     }
 
-        /* Zapisanie każdego wyniku do pliku */
+    /* Zapisanie każdego wyniku do pliku */
     private void saveScore(int score) {
         String filename = "HighScores.txt";
         try (PrintWriter out = new PrintWriter(new FileWriter(filename, true))) {
