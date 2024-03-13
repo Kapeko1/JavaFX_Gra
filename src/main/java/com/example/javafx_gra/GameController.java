@@ -13,6 +13,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.fxml.Initializable;
 import javafx.scene.input.KeyEvent;
@@ -72,13 +73,15 @@ public class GameController implements Initializable {
 
     /* Tworzenie nowego gracza o określonych wymiarach */
     private void createPlayer() {
+        Image snakeHead = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/javafx_gra/head_snake.png")));
+        ImagePattern pattern = new ImagePattern(snakeHead);
         /* Ustawienie rozmiarów gracza:
         v1 = x w gamePane
         v2 = y w gamePane
         v3 = szerokosc gracza
         v4 = wysokosc gracza */
         head = new Rectangle(200, 130, 10, 10);
-        head.setFill(Color.BLACK);
+        head.setFill(pattern);
         snakeSegments.add(head);
         gamePane.getChildren().add(head);
 
@@ -104,21 +107,25 @@ public class GameController implements Initializable {
             case UP:
                 if (currentDirection != Direction.DOWN) {
                     currentDirection = Direction.UP;
+                    head.rotateProperty().setValue(180) ;
                 }
                 break;
             case DOWN:
                 if (currentDirection != Direction.UP) {
                     currentDirection = Direction.DOWN;
+                    head.rotateProperty().setValue(0);
                 }
                 break;
             case LEFT:
                 if (currentDirection != Direction.RIGHT) {
                     currentDirection = Direction.LEFT;
+                    head.rotateProperty().setValue(90);
                 }
                 break;
             case RIGHT:
                 if (currentDirection !=Direction.LEFT) {
                     currentDirection = Direction.RIGHT;
+                    head.rotateProperty().setValue(-90);
                 }
                 break;
             case TAB: //Ustawienie pauzy na przycisk TAB
