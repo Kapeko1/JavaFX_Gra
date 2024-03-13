@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.fxml.Initializable;
 import javafx.scene.input.KeyEvent;
@@ -46,8 +47,23 @@ public class GameController implements Initializable {
     private final List<Rectangle> snakeSegments = new ArrayList<>(); // Lista segmentów węża
     private Rectangle head;
     private final Rectangle[] foodsTable = new Rectangle[5];
+
+
     URL fontUrl = getClass().getResource("JUNGLEFE.ttf");
     Font customFont = Font.loadFont(Objects.requireNonNull(fontUrl).toExternalForm(), 19);
+
+
+
+    Image snakeBodyImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/javafx_gra/snake_body.png")));
+    ImagePattern bodyPattern = new ImagePattern(snakeBodyImage);
+    Image appleImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/javafx_gra/appleFood.png")));
+    ImagePattern appleImagePattern = new ImagePattern(appleImage);
+    Image cheeseImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/javafx_gra/chesseFood.png")));
+    ImagePattern cheeseImagePattern = new ImagePattern(cheeseImage);
+    Image chickenImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/javafx_gra/chickenFood.png")));
+    ImagePattern chickenImagePattern = new ImagePattern(chickenImage);
+
+
     int gameLoopCounter = 0;
 
     public enum Direction {
@@ -276,11 +292,11 @@ public class GameController implements Initializable {
 
             //Tworzenie jedzenia roznej jakosci
             if (color >= 1 && color < 5) {
-                food.setFill(Color.ANTIQUEWHITE);
+                food.setFill(appleImagePattern);
             } else if (color >= 5 && color < 8) {
-                food.setFill(Color.GREEN);
+                food.setFill(cheeseImagePattern);
             } else if (color >= 8 && color < 10) {
-                food.setFill(Color.DARKBLUE);
+                food.setFill(chickenImagePattern);
             }
             foodsTable[i] = food;
             final Rectangle finalFood = food;
@@ -293,18 +309,22 @@ public class GameController implements Initializable {
     private void checkCollisionWithFood() {
         for (int i = 0; i < foodsTable.length; i++) {
             if (foodsTable[i] != null && head.getBoundsInParent().intersects(foodsTable[i].getBoundsInParent())) {
-                Color foodColor = (Color) foodsTable[i].getFill();
+                Paint fill = foodsTable[i].getFill();
                 int pointsToAdd = 0;
                 int sizeToAdd = 0;
-                if (foodColor.equals(Color.ANTIQUEWHITE)) {
-                    pointsToAdd = 1;
-                    sizeToAdd = 3;
-                } else if (foodColor.equals(Color.GREEN)) {
-                    pointsToAdd = 3;
-                    sizeToAdd = 9;
-                } else if (foodColor.equals(Color.DARKBLUE)) {
-                    pointsToAdd = 5;
-                    sizeToAdd = 14;
+
+                // Sprawdzenie jaki fill ma konkretne jedzenie
+                if (fill instanceof ImagePattern foodPattern) {
+                    if (foodPattern.equals(appleImagePattern)) {
+                        pointsToAdd = 1;
+                        sizeToAdd = 3;
+                    } else if (foodPattern.equals(cheeseImagePattern)) {
+                        pointsToAdd = 3;
+                        sizeToAdd = 9;
+                    } else if (foodPattern.equals(chickenImagePattern)) {
+                        pointsToAdd = 5;
+                        sizeToAdd = 14;
+                    }
                 }
                 incScore(pointsToAdd);
                 incSnakeSize(sizeToAdd);
@@ -321,15 +341,21 @@ public class GameController implements Initializable {
         scoreLabel.setText("Wynik = " + score);
     }
 
-    /* Zwiekszenie rozmiarów węża na podstawie rodzaju zjedzoneog jedzenia */
+    /* Zwiekszenie rozmiarów węża na podstawie rodzaju zjedzoneog jedzenia oraz
+    * zmiana niewidocznego ogona weza */
     private void incSnakeSize(int size) {
         for (int i = 0; i < size; i++) {
+            if(snakeSegments.get(3).getFill() == Color.TRANSPARENT){
+                for (int z = 10 ; z < 23; z++ ){
+                    snakeSegments.get(z).setFill(bodyPattern);
+                }
+            }
             // Pobierz pozycję ostatniego widocznego segmentu
             Rectangle tail = snakeSegments.getLast();
 
             // Tworzenie nowego segmentu na koncu
             Rectangle newSegment = new Rectangle(tail.getX(), tail.getY(), tail.getWidth(), tail.getHeight());
-            newSegment.setFill(Color.BLACK); // Ustaw kolor nowego segmentu na czarny (widoczny)
+            newSegment.setFill(bodyPattern);
 
             // Dodawanie nowego segmentu do listy i gamePane
             snakeSegments.add(newSegment);
