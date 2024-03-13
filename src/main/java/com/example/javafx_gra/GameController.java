@@ -56,11 +56,11 @@ public class GameController implements Initializable {
 
     Image snakeBodyImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/javafx_gra/snake_body.png")));
     ImagePattern bodyPattern = new ImagePattern(snakeBodyImage);
-    Image appleImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/javafx_gra/appleFood.png")));
+    Image appleImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("appleFood.png")));
     ImagePattern appleImagePattern = new ImagePattern(appleImage);
-    Image cheeseImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/javafx_gra/chesseFood.png")));
+    Image cheeseImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("chesseFood.png")));
     ImagePattern cheeseImagePattern = new ImagePattern(cheeseImage);
-    Image chickenImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/javafx_gra/chickenFood.png")));
+    Image chickenImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("chickenFood.png")));
     ImagePattern chickenImagePattern = new ImagePattern(chickenImage);
 
 
