@@ -19,7 +19,7 @@
    <Pane fx:id="borderPane" layoutX="97.0" layoutY="18.0" prefHeight="262.0" prefWidth="440.0" style="-fx-background-color: #000000;" />
    <Pane fx:id="gamePane" layoutX="108.0" layoutY="25.0" prefHeight="249.0" prefWidth="417.0" style="-fx-background-color: #808080;" />
    <Label fx:id="l1" layoutX="100.0" layoutY="303.0" text="1 P" />
-   <Label fx:id="l2" layoutX="200.0" layoutY="303.0" text="1 P" />
+   <Label fx:id="l2" layoutX="200.0" layoutY="303.0" text="3 P" />
    <Label fx:id="l3" layoutX="300.0" layoutY="303.0" text="5 P" />
    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="10.0" layoutX="133.0" layoutY="309.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: ANTIQUEWHITE;" width="10.0" />
    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="10.0" layoutX="233.0" layoutY="309.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: GREEN;" width="10.0" />

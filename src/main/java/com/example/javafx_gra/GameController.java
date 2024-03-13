@@ -2,6 +2,7 @@ package com.example.javafx_gra;
 
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -44,6 +45,9 @@ public class GameController implements Initializable {
     private final List<Rectangle> snakeSegments = new ArrayList<>(); // Lista segmentów węża
     private Rectangle head;
     private final Rectangle[] foodsTable = new Rectangle[5];
+    URL fontUrl = getClass().getResource("JUNGLEFE.ttf");
+    Font customFont = Font.loadFont(Objects.requireNonNull(fontUrl).toExternalForm(), 19);
+    int gameLoopCounter = 0;
 
     public enum Direction {
         UP, DOWN, LEFT, RIGHT, NONE}
@@ -53,16 +57,13 @@ public class GameController implements Initializable {
     @FXML
     /* Wywołanie metody initialize, która uruchamiana jest wraz z uruchomieniem GameController */
     public void initialize(URL location, ResourceBundle resources) {
-        // Ustawienie niestandardowych czcionek i ich rozmiaru
-        URL fontUrl = getClass().getResource("JUNGLEFE.ttf");
-        Font customFont = Font.loadFont(Objects.requireNonNull(fontUrl).toExternalForm(), 19);
+        // Ustawienie labeli legendy
         l1.setFont(customFont);
         l2.setFont(customFont);
         l3.setFont(customFont);
         scoreLabel.setFont(customFont);
         scoreLabel.setText("Wynik = " + score);
-
-
+        // Uruchomienie wstepnych ustawien i petli gry
         createPlayer();
         gamePane.requestFocus();
         setControl();
@@ -142,6 +143,13 @@ public class GameController implements Initializable {
             checkCollisionWithSelf();
             refreshFoodInTable();
             checkCollisionWithFood();
+            gameLoopCounter++;
+
+            // Usuniecie falszywego jedzenia co 20 cykli petli gry
+            if(gameLoopCounter == 20){
+                checkGamePaneForBadFood();
+                gameLoopCounter = 0;
+            }
         }
     };
 
@@ -169,7 +177,7 @@ public class GameController implements Initializable {
     }
 
     /* Wywołanie głownego menu */
-    public void showMainMenu() {
+    private void showMainMenu() {
         try {
             Parent mainMenu = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainMenu.fxml")));
             Scene scene = new Scene(mainMenu);
@@ -181,7 +189,7 @@ public class GameController implements Initializable {
     }
 
     /* Wywołanie ekranu przegranej gry */
-    public void showgameOverPane() {
+    private void showgameOverPane() {
             gameLoop.stop();
             Pane gameOverPane = new Pane();
             gameOverPane.setPrefSize(635, 420);
@@ -197,25 +205,35 @@ public class GameController implements Initializable {
 
             //Konfiguracja przyciskow retry i mainMenu
             Button retryGameButton = new Button();
-            retryGameButton.setLayoutX(229.0);
-            retryGameButton.setLayoutY(296.0);
-            retryGameButton.setPrefHeight(35.0);
-            retryGameButton.setPrefWidth(206.0);
+            retryGameButton.setLayoutX(253.0);
+            retryGameButton.setLayoutY(295.0);
+            retryGameButton.setPrefHeight(42.0);
+            retryGameButton.setPrefWidth(64.0);
             retryGameButton.setStyle("-fx-background-color: TRANSPARENT;");
             retryGameButton.setOnAction(e -> retryGame());
 
             Button goBackToMainMenuButton = new Button();
-            goBackToMainMenuButton.setLayoutX(229.0);
-            goBackToMainMenuButton.setLayoutY(353.0);
-            goBackToMainMenuButton.setPrefHeight(35.0);
-            goBackToMainMenuButton.setPrefWidth(206.0);
+            goBackToMainMenuButton.setLayoutX(335.0);
+            goBackToMainMenuButton.setLayoutY(295.0);
+            goBackToMainMenuButton.setPrefHeight(42.0);
+            goBackToMainMenuButton.setPrefWidth(64.0);
             goBackToMainMenuButton.setStyle("-fx-background-color: TRANSPARENT;");
             goBackToMainMenuButton.setOnAction(e -> showMainMenu());
+
+            Label finalScoreLabel = new Label();
+            finalScoreLabel.setPrefSize(130.0, 23.0);
+            finalScoreLabel.setLayoutX(255);
+            finalScoreLabel.setLayoutY(266);
+            finalScoreLabel.setAlignment(Pos.CENTER);
+            finalScoreLabel.setFont(customFont);
+            finalScoreLabel.setText("Wynik = " + score);
+
 
             // Dodanie elementow do gameOverPane a nastepnie do glownego Pane
             gameOverPane.getChildren().add(gameOverImage);
             gameOverPane.getChildren().add(goBackToMainMenuButton);
             gameOverPane.getChildren().add(retryGameButton);
+            gameOverPane.getChildren().add(finalScoreLabel);
             gameSceneBase.getChildren().add(gameOverPane);
 
             saveScore(score);
@@ -329,7 +347,7 @@ public class GameController implements Initializable {
     }
 
     /* Zresetowanie gry do stanu wyjsciowego */
-    public void retryGame() {
+    private void retryGame() {
         //Usuniecie gameOverPane
         gameSceneBase.getChildren().removeIf(node -> node instanceof Pane && node != gamePane && node != borderPane);
 
@@ -345,10 +363,23 @@ public class GameController implements Initializable {
         // Ponowne inicjowanie gracza i elementów gry
         createPlayer();
         scoreLabel.setText("Wynik = " + score);
+        gameLoopCounter = 0;
 
         // Ponowne uruchomienie pętli gry
         gameLoop.start();
     }
 
+    /* Naprawa błedu powodującego, że czasem na gamePane pojawiały się obiekty
+    * typu Rectangle, z ktorymi waz nie mogl wchodzic w interakcje.  */
+    private void checkGamePaneForBadFood(){
+        // Tworzymy nowy set zawierający wszystkie "legalne" Rectangles w gamePane
+        Set<Rectangle> validRectangles = new HashSet<>();
+        validRectangles.addAll(Arrays.asList(foodsTable));
+        validRectangles.addAll(snakeSegments);
+        // Usuniecie tych, które nie naleza do validRectangles
+        gamePane.getChildren().removeIf(node -> node instanceof Rectangle && !validRectangles.contains(node));
+        }
+
 }
+
 
