@@ -1,19 +1,5 @@
-Do zrobienia (w najbliższej przyszłości):
-    - Pojawienie się pożywienia (kółka o różnych kolorach) dodających rożne ilości
-    punktów do Score po najechaniu głową węża.
-        (Enum lub inna tablica (0-5 wartości 1, 6-8 wartosci 2, 9-10 wartosci 3. LOSOWANIE)
-    - Aktualizacja rozmiarów węża na podstawie Score, pamiętanie jago ruchów i porażka po
-    kolizji z częścią ciała.
-    - Eksport wyników do pliku, sortowanie od najwiekszych do najmniejszych, wyświetlanie
-    w High Scores.
+Edytować segmenty ciała węża, dodać grafikę, co zrobić na skrętach o 90 stopni?
 
-Do zrobienia (kiedyś):
-    - Ładniejsze menu, poszukać przycisków, jakiś background smieszny?
-    - Aktualizacja pola gry - szukanie ikonek, moze jakas fancy głowa węża?
-    - Dodanie różnych gier
-        Przechodzenie kwadracikiem przez waskie pola
+Edytować pole gry ( niech nie bedzie brzydkie szare, tylko znajdz jakies grafikki
 
-
-WAZNE!!
-Do zarzadzania przechodzeniem miedzy scenami
-napisz SceneController (
+Edycja pozywienia - nie kwadraty o roznych kolorach, tylko np. jablko robak i kurczak.
