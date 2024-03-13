@@ -102,16 +102,24 @@ public class GameController implements Initializable {
     private void handleKeyPress(KeyEvent keyEvent) {
         switch (keyEvent.getCode()) {
             case UP:
-                currentDirection = Direction.UP;
+                if (currentDirection != Direction.DOWN) {
+                    currentDirection = Direction.UP;
+                }
                 break;
             case DOWN:
-                currentDirection = Direction.DOWN;
+                if (currentDirection != Direction.UP) {
+                    currentDirection = Direction.DOWN;
+                }
                 break;
             case LEFT:
-                currentDirection = Direction.LEFT;
+                if (currentDirection != Direction.RIGHT) {
+                    currentDirection = Direction.LEFT;
+                }
                 break;
             case RIGHT:
-                currentDirection = Direction.RIGHT;
+                if (currentDirection !=Direction.LEFT) {
+                    currentDirection = Direction.RIGHT;
+                }
                 break;
             case TAB: //Ustawienie pauzy na przycisk TAB
                 currentDirection = Direction.NONE;
