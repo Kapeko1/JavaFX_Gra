@@ -71,10 +71,11 @@ public class GameController implements Initializable {
         gameLoop.start();
     }
 
-    /* Tworzenie nowego gracza o określonych wymiarach */
+    /* Tworzenie nowego gracza o określonych wymiarach i załadowanie obrazu głowy */
     private void createPlayer() {
         Image snakeHead = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/javafx_gra/head_snake.png")));
         ImagePattern pattern = new ImagePattern(snakeHead);
+
         /* Ustawienie rozmiarów gracza:
         v1 = x w gamePane
         v2 = y w gamePane
