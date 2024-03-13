@@ -5,7 +5,6 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="gameSceneBase" prefHeight="420.0" prefWidth="635.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx_gra.GameController">
@@ -16,12 +15,28 @@
       <font>
          <Font name="AkayaKanadaka-Regular" size="13.0" />
       </font></Label>
-   <Pane fx:id="borderPane" layoutX="97.0" layoutY="18.0" prefHeight="262.0" prefWidth="440.0" style="-fx-background-color: #000000;" />
-   <Pane fx:id="gamePane" layoutX="108.0" layoutY="25.0" prefHeight="249.0" prefWidth="417.0" style="-fx-background-color: #808080;" />
+   <ImageView fx:id="borderPane" blendMode="MULTIPLY" depthTest="DISABLE" fitHeight="262.0" fitWidth="440.0" layoutX="97.0" layoutY="18.0" opacity="0.94" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@gameBackground.png" />
+      </image>
+   </ImageView>
+   <Pane fx:id="gamePane" layoutX="99.0" layoutY="21.0" opacity="0.9" prefHeight="245.0" prefWidth="436.0" style="-fx-background-color: #808080;" />
    <Label fx:id="l1" layoutX="100.0" layoutY="303.0" text="1 P" />
    <Label fx:id="l2" layoutX="200.0" layoutY="303.0" text="3 P" />
    <Label fx:id="l3" layoutX="300.0" layoutY="303.0" text="5 P" />
-   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="10.0" layoutX="133.0" layoutY="309.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: ANTIQUEWHITE;" width="10.0" />
-   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="10.0" layoutX="233.0" layoutY="309.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: GREEN;" width="10.0" />
-   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="10.0" layoutX="333.0" layoutY="309.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: DARKBLUE;" width="10.0" />
+   <ImageView fitHeight="13.0" fitWidth="13.0" layoutX="333.0" layoutY="307.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@chickenFood.png" />
+      </image>
+   </ImageView>
+   <ImageView fitHeight="13.0" fitWidth="13.0" layoutX="233.0" layoutY="307.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@chesseFood.png" />
+      </image>
+   </ImageView>
+   <ImageView fitHeight="13.0" fitWidth="13.0" layoutX="133.0" layoutY="307.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@appleFood.png" />
+      </image>
+   </ImageView>
 </AnchorPane>

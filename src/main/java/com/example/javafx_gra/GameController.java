@@ -3,6 +3,7 @@ package com.example.javafx_gra;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -34,7 +35,7 @@ public class GameController implements Initializable {
     @FXML
     private AnchorPane gameSceneBase;
     @FXML
-    private Pane borderPane;
+    private ImageView borderPane;
     @FXML
     private Label l1;
     @FXML
@@ -100,16 +101,16 @@ public class GameController implements Initializable {
         head = new Rectangle(200, 130, 10, 10);
         head.setFill(pattern);
         snakeSegments.add(head);
-        gamePane.getChildren().add(head);
+        addToGamePane(head);
 
         /* Obowiazkowy fragment tworzący swojego rodzaju transparentny ogon za glowa weza
         * Jego rozmiary ustalilem metoda prob i bledow tak zeby gra nie przerywala sie
         * od razu po zjedzeniu Food oraz zeby umozliwic dynamiczne skrecanie */
         for (int i = 0; i < 22; i++) {
-            Rectangle transparentSegment = new Rectangle(220 - (i + 1) * 10, 135, 10, 10); // Pozycjonowanie za głową
+            Rectangle transparentSegment = new Rectangle(200 - (i + 1) * 10, 130, 10, 10); // Pozycjonowanie za głową
             transparentSegment.setFill(Color.TRANSPARENT);
             snakeSegments.add(transparentSegment);
-            gamePane.getChildren().add(transparentSegment);
+            addToGamePane(transparentSegment);
         }
     }
 
@@ -283,8 +284,8 @@ public class GameController implements Initializable {
             if (foodsTable[i] == null){
 
             // Generacja losowych współrzędnych w ramach gamePane
-            double x = rand.nextDouble() * (417 - foodWidth);
-            double y = rand.nextDouble() * (249 - foodHeight);
+            double x = rand.nextDouble() * (436 - foodWidth);
+            double y = rand.nextDouble() * (245 - foodHeight);
 
             Rectangle food = new Rectangle(x, y, foodWidth, foodHeight);
 
@@ -300,7 +301,7 @@ public class GameController implements Initializable {
             }
             foodsTable[i] = food;
             final Rectangle finalFood = food;
-            Platform.runLater(() -> gamePane.getChildren().add(finalFood));
+            Platform.runLater(() ->  addToGamePane(finalFood));
             }
         }
     }
@@ -359,7 +360,7 @@ public class GameController implements Initializable {
 
             // Dodawanie nowego segmentu do listy i gamePane
             snakeSegments.add(newSegment);
-            Platform.runLater(() -> gamePane.getChildren().add(newSegment));
+            Platform.runLater(() ->  addToGamePane(newSegment));
         }
     }
 
@@ -422,6 +423,12 @@ public class GameController implements Initializable {
         gamePane.getChildren().removeIf(node -> node instanceof Rectangle && !validRectangles.contains(node));
         }
 
+    /* Własna metoda do dodawania elementow do gamePane - musialem dodać aby
+    * ustawiac opacity niezaleznie odopacity rodzica */
+    private void addToGamePane(Node node) {
+        node.setOpacity(1.0); // Ustaw przezroczystość elementu na 1
+        gamePane.getChildren().add(node); // Dodaj element do gamePane
+    }
 }
 
 
