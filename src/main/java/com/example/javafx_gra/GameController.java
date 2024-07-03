@@ -1,6 +1,8 @@
 package com.example.javafx_gra;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -22,6 +24,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.image.ImageView;
+import javafx.util.Duration;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -48,7 +52,9 @@ public class GameController implements Initializable {
     private final List<Rectangle> snakeSegments = new ArrayList<>(); // Lista segmentów węża
     private Rectangle head;
     private final Rectangle[] foodsTable = new Rectangle[5];
-
+    private boolean enemySpawned = false;
+    private Rectangle enemyHead;
+    private final List<Rectangle> enemySegments = new ArrayList<>();
 
     URL fontUrl = getClass().getResource("JUNGLEFE.ttf");
     Font customFont = Font.loadFont(Objects.requireNonNull(fontUrl).toExternalForm(), 19);
@@ -71,6 +77,8 @@ public class GameController implements Initializable {
         UP, DOWN, LEFT, RIGHT, NONE}
 
     private Direction currentDirection = Direction.NONE;
+    private Direction enemyDirection = Direction.RIGHT;
+    private Timeline enemyDirectionChangeTimer;
 
     @FXML
     /* Wywołanie metody initialize, która uruchamiana jest wraz z uruchomieniem GameController */
@@ -86,6 +94,7 @@ public class GameController implements Initializable {
         gamePane.requestFocus();
         setControl();
         gameLoop.start();
+        startEnemyDirectionChangeTimer();
     }
 
     /* Tworzenie nowego gracza o określonych wymiarach i załadowanie obrazu głowy */
@@ -173,10 +182,20 @@ public class GameController implements Initializable {
                 case NONE:
                     break; // Czeka na ruch gracza
             }
+            if (enemySpawned) {
+                moveEnemy();
+                checkCollisionWithEnemy();
+            }
             checkCollisionWithSelf();
             refreshFoodInTable();
             checkCollisionWithFood();
             gameLoopCounter++;
+
+            if (score >= 100 && !enemySpawned) {
+                createEnemy();
+                enemySpawned = true;
+            }
+
 
             // Usuniecie falszywego jedzenia co 20 cykli petli gry
             if(gameLoopCounter == 20){
@@ -407,7 +426,7 @@ public class GameController implements Initializable {
         createPlayer();
         scoreLabel.setText("Wynik = " + score);
         gameLoopCounter = 0;
-
+        enemySpawned = false;
         // Ponowne uruchomienie pętli gry
         gameLoop.start();
     }
@@ -419,6 +438,7 @@ public class GameController implements Initializable {
         Set<Rectangle> validRectangles = new HashSet<>();
         validRectangles.addAll(Arrays.asList(foodsTable));
         validRectangles.addAll(snakeSegments);
+        validRectangles.addAll(enemySegments);
         // Usuniecie tych, które nie naleza do validRectangles
         gamePane.getChildren().removeIf(node -> node instanceof Rectangle && !validRectangles.contains(node));
         }
@@ -429,6 +449,108 @@ public class GameController implements Initializable {
         node.setOpacity(1.0); // Ustaw przezroczystość elementu na 1
         gamePane.getChildren().add(node); // Dodaj element do gamePane
     }
+
+
+    private void createEnemy() {
+        Image enemyHeadImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/javafx_gra/head_snake.png")));
+        ImagePattern enemyPattern = new ImagePattern(enemyHeadImage);
+
+        enemyHead = new Rectangle(100, 100, 10, 10);
+        enemyHead.setFill(enemyPattern);
+        enemySegments.add(enemyHead);
+        addToGamePane(enemyHead);
+        for (int i = 0; i < 2; i++) {
+            Rectangle segment = new Rectangle(200 - (i + 1) * 10, 130, 10, 10); // Pozycjonowanie za głową
+            segment.setFill(Color.RED);
+            enemySegments.add(segment);
+            addToGamePane(segment);
+        }
+    }
+
+    private void moveEnemy() {
+        Rectangle enemyHead = enemySegments.getFirst();
+        double newX = enemyHead.getX();
+        double newY = enemyHead.getY();
+
+        switch (enemyDirection) {
+            case UP:
+                newY -= 1.5;
+                break;
+            case DOWN:
+                newY += 1.5;
+                break;
+            case LEFT:
+                newX -= 1.5;
+                break;
+            case RIGHT:
+                newX += 1.5;
+                break;
+        }
+
+        if (newX < 0 || newX + enemyHead.getWidth() > gamePane.getWidth() || newY < 0 || newY + enemyHead.getHeight() > gamePane.getHeight()) {
+            changeEnemyDirection();
+        } else {
+            enemyHead.setX(newX);
+            enemyHead.setY(newY);
+        }
+
+        for (int i = enemySegments.size() - 1; i > 0; i--) {
+            Rectangle prevSegment = enemySegments.get(i - 1);
+            Rectangle segment = enemySegments.get(i);
+            segment.setX(prevSegment.getX());
+            segment.setY(prevSegment.getY());
+        }
+    }
+
+    private void changeEnemyDirection() {
+        Random rand = new Random();
+        Direction newDirection;
+        do {
+            int dir = rand.nextInt(4);
+            switch (dir) {
+                case 0:
+                    newDirection = Direction.UP;
+                    break;
+                case 1:
+                    newDirection = Direction.DOWN;
+                    break;
+                case 2:
+                    newDirection = Direction.LEFT;
+                    break;
+                case 3:
+                    newDirection = Direction.RIGHT;
+                    break;
+                default:
+                    newDirection = enemyDirection; // Default case shouldn't happen
+                    break;
+            }
+        } while (newDirection == enemyDirection); // Repeat if new direction is the same as current direction
+
+        enemyDirection = newDirection;
+        }
+
+    private void checkCollisionWithEnemy() {
+        Rectangle playerHead = snakeSegments.getFirst();
+        Rectangle enemyHead = enemySegments.getFirst();
+
+        if (playerHead.getBoundsInParent().intersects(enemyHead.getBoundsInParent())) {
+            showgameOverPane();
+        }
+
+        for (Rectangle enemySegment : enemySegments) {
+            if (playerHead.getBoundsInParent().intersects(enemySegment.getBoundsInParent())) {
+                showgameOverPane();
+                break;
+            }
+        }
+    }
+    private void startEnemyDirectionChangeTimer() {
+        enemyDirectionChangeTimer = new Timeline(new KeyFrame(Duration.seconds(2), event -> changeEnemyDirection()));
+        enemyDirectionChangeTimer.setCycleCount(Timeline.INDEFINITE);
+        enemyDirectionChangeTimer.play();
+    }
+
+
 }
 
 
